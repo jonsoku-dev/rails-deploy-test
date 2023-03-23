@@ -40,7 +40,7 @@ jobs:
           context: .
           push: true
 #          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
-          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:latest
+          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
 
       - name: Set up SSH
         run: |
@@ -52,7 +52,7 @@ jobs:
 
       - name: Deploy to AWS instance
         env:
-          DOCKER_IMAGE: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:latest
+          DOCKER_IMAGE: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
         run: |
           rsync -avz -e "ssh -i private_key" --exclude '.git/' --exclude 'node_modules/' --exclude 'tmp/' . ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/app
           ssh -i private_key ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "cd /app && echo \"image: $DOCKER_IMAGE\" >> docker-compose.override.yml"
