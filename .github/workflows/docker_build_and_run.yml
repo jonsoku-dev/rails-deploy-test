@@ -30,6 +30,8 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -39,8 +41,8 @@ jobs:
         with:
           context: .
           push: true
-#          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
-          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
+#          tags: ${{ steps.login-ecr-public.outputs.registry }}/rails-deploy-test:${{ github.sha }}
+          tags: ${{ steps.login-ecr-public.outputs.registry }}/rails-deploy-test:${{ github.sha }}
 
       - name: Set up SSH
         run: |
@@ -52,9 +54,9 @@ jobs:
 
       - name: Deploy to AWS instance
         env:
-          DOCKER_IMAGE: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
+          DOCKER_IMAGE: ${{ steps.login-ecr-public.outputs.registry }}/rails-deploy-test:${{ github.sha }}
         run: |
           rsync -avz -e "ssh -i private_key" --exclude '.git/' --exclude 'node_modules/' --exclude 'tmp/' . ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/app
           ssh -i private_key ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "cd /app && echo \"image: $DOCKER_IMAGE\" >> docker-compose.override.yml"
-          ssh -i private_key ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "docker login -u AWS -p $(aws ecr get-login-password) ${{ steps.login-ecr.outputs.registry }}"
+          ssh -i private_key ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "docker login -u AWS -p $(aws ecr get-login-password) ${{ steps.login-ecr-public.outputs.registry }}"
           ssh -i private_key ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "cd /app && docker-compose pull web && docker-compose down && docker-compose up -d"
