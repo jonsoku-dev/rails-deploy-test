@@ -23,7 +23,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
           role-session-name: MySessionName
-          aws-region: us-east-1
+          aws-region: ap-northeast-1
 
       - name: Login to Amazon ECR
         id: login-ecr
