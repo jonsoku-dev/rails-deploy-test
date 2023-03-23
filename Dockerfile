@@ -22,7 +22,7 @@ COPY Gemfile.lock /Gemfile.lock
 RUN bundle install
 COPY . /app
 
-COPY docker/app/entrypoint.sh /usr/bin/
+COPY /entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
