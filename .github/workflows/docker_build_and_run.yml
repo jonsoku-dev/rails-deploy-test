@@ -39,7 +39,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
+#          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:${{ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/rails-deploy-test:latest
 
       - name: Set up SSH
         run: |
