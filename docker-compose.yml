@@ -1,15 +1,18 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    volumes:
-      - .:/app
-      - gems:/gems
+  app:
+    container_name: "app"
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
     ports:
       - "3000:3000"
-    env_file:
-      - .env
-
-volumes:
-  gems:
+    environment:
+      PORT: 3000
+      BINDING: 0.0.0.0
+    tty: true
+    command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+    networks:
+      - frontend
+      - backend
