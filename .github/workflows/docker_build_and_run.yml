@@ -11,15 +11,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     env:
       AWS_DEFAULT_REGION: ap-northeast-1
       AWS_REGION: ap-northeast-1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::111111111111:role/my-github-actions-role-test
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         id: login-ecr
