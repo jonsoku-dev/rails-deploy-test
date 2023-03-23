@@ -60,7 +60,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             whoami
-            cd app
+            cd rails-deploy-test
             sudo git pull origin main
             sudo docker compose up --build -d
 
